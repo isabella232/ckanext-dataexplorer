@@ -1,4 +1,4 @@
-this.ckan.module('resource-view-filters', function (jQuery) {
+this.ckan.module('resource-view-filters-override', function (jQuery) {
   'use strict';
 
   function initialize() {
@@ -42,17 +42,36 @@ this.ckan.module('resource-view-filters', function (jQuery) {
 
     addFilterButton.click(function (evt) {
       // FIXME: Move this class name to some external variable to keep it DRY
-      var addFilterDiv = $('<div class="resource-view-filter"><input type="hidden"></input></div>'),
-          addFilterInput = addFilterDiv.find('input');
-      el.append(addFilterDiv);
 
-      // TODO: Remove element from "data" when some select selects it.
-      addFilterInput.select2({
-        data: data,
-        placeholder: self._('Select a field'),
-        width: 'resolve',
-      }).on('change', onChangeCallback);
+      // check if we already have filters without fields
+      let current_filters = $('.resource-view-filter');
+      let ok_to_add = true;
+      // if .resource-view-filter-values exists it's ok
+      for ( var i = 0, l = current_filters.length; i < l; i++ ) {
+        let elems = $(current_filters[i]).find('.resource-view-filter-values');
+        if (elems.length > 0) {
+          // OK
+          console.log('OK')
+        } else {
+          ok_to_add = false;
+          let elem = $(current_filters[i]);
+          elem.hide(400).show(200);
+        }
+        
+      }
 
+      if (ok_to_add) {
+        var addFilterDiv = $('<div class="resource-view-filter"><input type="hidden"></input></div>'),
+            addFilterInput = addFilterDiv.find('input');
+        el.append(addFilterDiv);
+
+        // TODO: Remove element from "data" when some select selects it.
+        addFilterInput.select2({
+          data: data,
+          placeholder: self._('Select a field'),
+          width: '350px',
+        }).on('change', onChangeCallback);
+      }
       evt.preventDefault();
     });
 
@@ -91,7 +110,7 @@ this.ckan.module('resource-view-filters', function (jQuery) {
       dropdowns.find('input').select2({
         allowClear: true,
         placeholder: ' ', // select2 needs a placeholder to allow clearing
-        width: 'resolve',
+        width: '300px',
         minimumInputLength: 0,
         ajax: {
           url: ckan.url('/api/3/action/datastore_search'),
