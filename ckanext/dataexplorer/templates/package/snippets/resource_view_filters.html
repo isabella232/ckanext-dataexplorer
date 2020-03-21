@@ -1,0 +1,10 @@
+{% resource 'dataexplorer/resource-view-filters-override.js' %}
+
+<div
+  class="resource-view-filters-override"
+  data-module="resource-view-filters-override"
+  data-module-resource-id="{{ resource['id'] }}"
+  data-module-fields="{{ h.dump_json(h.resource_view_get_fields(resource)) }}"
+  >
+
+</div>
