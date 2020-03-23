@@ -203,31 +203,31 @@ this.ckan.module('recline_view', function (jQuery, _) {
     },
 
     _newDataExplorer: function (dataset, map_config, options) {
-      var views = [
-        {
-          id: 'grid',
-          label: _('Grid').fetch(),
-          view: new recline.View.SlickGrid({
-            model: dataset
-          })
-        },
-        {
-          id: 'graph',
-          label: _('Graph').fetch(),
-          view: new recline.View.Graph({
-            model: dataset
-          })
-        },
-        {
-          id: 'map',
-          label: _('Map').fetch(),
-          view: new recline.View.Map(this._reclineMapViewOptions(dataset, map_config))
-        }
-      ];
+      var views = [];
 
-      views = views.filter(function(view) {
-        return options[view.id + '_tab'] === 'show'
-      });
+      // just starts active views
+      
+      if (options['grid_tab'] === 'show') {
+        views.push({
+            id: 'grid',
+            label: _('Grid').fetch(),
+            view: new recline.View.SlickGrid({model: dataset})
+          })
+        }
+      if (options['graph_tab'] === 'show') {
+        views.push({
+            id: 'graph',
+            label: _('Graph').fetch(),
+            view: new recline.View.Graph({model: dataset})
+          })
+        }
+      if (options['map_tab'] === 'show') {
+          views.push({
+              id: 'map',
+              label: _('Map').fetch(),
+              view: new recline.View.Map(this._reclineMapViewOptions(dataset, map_config))
+            })
+          }
 
       var sidebarViews = [
         {
