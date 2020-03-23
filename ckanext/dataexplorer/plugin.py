@@ -6,6 +6,7 @@ from ckan.common import json, config
 import ckan.plugins as p
 import ckan.plugins.toolkit as toolkit
 from ckan.lib.plugins import DefaultTranslation
+import ckan.lib.navl.dictization_functions as df
 
 log = getLogger(__name__)
 ignore_empty = p.toolkit.get_validator('ignore_empty')
@@ -101,6 +102,17 @@ class ReclineViewBase(p.SingletonPlugin, DefaultTranslation):
         }
 
 
+def ensure_one_resource_view_tab(key, flattened_data, errors, context):
+    missing = df.missing
+    grid_tab = flattened_data.get(('grid_tab', ), False) 
+    if grid_tab is missing:
+        grid_tab = False
+    graph_tab = flattened_data.get(('graph_tab', ), False)
+    map_tab = flattened_data.get(('map_tab', ), False)
+    
+    if not grid_tab and not graph_tab and not map_tab:
+        raise Invalid('You must define at least one view (grid, graph or map)')
+
 class ReclineView(ReclineViewBase):
     '''
     This extension views resources using a Recline MultiView.
@@ -113,7 +125,7 @@ class ReclineView(ReclineViewBase):
                 'icon': 'table',
                 'requires_datastore': False,
                 'default_title': p.toolkit._('Data Explorer'),
-                'schema': {'grid_tab': [ignore_empty],
+                'schema': {'grid_tab': [ensure_one_resource_view_tab, ignore_empty],
                            'graph_tab': [ignore_empty],
                            'map_tab': [ignore_empty],
                           }
